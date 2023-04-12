@@ -1,0 +1,58 @@
+% *** matexart ***
+% A package with math tools and environments for math papers.
+%
+% Copyright (C) 2023 OrthoPole
+%
+% * This program is free software: you can redistribute it and/or
+% * modify it under the terms of the GNU General Public License
+% * as published by the Free Software Foundation, either version 3
+% * of the License, or (at your option) any later version.
+% *
+% * This program is distributed in the hope that it will be useful,
+% * but WITHOUT ANY WARRANTY; without even the implied warranty of
+% * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+% *
+% * GNU General Public License for more details.
+% * You should have received a copy of the GNU General Public License
+% * along with this program. If not, see <https://www.gnu.org/licenses/>.
+%
+%
+% This package is currently a set of macros of math tools
+% and also defines useful commands to help create numbered
+% environments more efficiently and gracefully.
+%
+% Name: MaTeXart
+% Version: 1.0.0
+% Date: 2023/04/12
+% Author: OrthoPole (https://github.com/topfyf)
+%
+
+\def\pacakgename{MaTeXart}
+\def\packagever{1.0.0}
+\def\packagedate{2023/04/12}
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{matexart}[\packagename\space\packagever\space\packagedate]
+
+
+%%% import packages %%%
+
+% pacakges for typesetting
+\RequirePackage[margin=1in]{geometry}
+\RequirePackage[inline]{enumitem}
+\RequirePackage[normalem]{ulem}
+\RequirePackage{color, caption, graphicx, subfigure}
+\RequirePackage[pdfstartview=FitH, CJKbookmarks=true,
+    bookmarksnumbered=true, bookmarksopen=true,
+    colorlinks, linkcolor=black, anchorcolor=black,
+    citecolor=black]{hyperref}
+\RequirePackage{cleveref}
+
+% pacakges for math formula
+\RequirePacakge{amsmath, amssymb, amsthm, amsfonts}
+\RequirePackage{mathrsfs, extarrows, bbm, bm}
+\RequirePackage{commutative-diagrams, quiver}
+\RequirePacakge[new]{old-arrows}
+
+
+\endinput
