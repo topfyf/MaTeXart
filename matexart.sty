@@ -1,5 +1,5 @@
 % *** matexart ***
-% A package with math tools and environments for math papers.
+% A package with useful macros and environments for math papers.
 %
 % Copyright (C) 2023 OrthoPole
 %
@@ -27,12 +27,12 @@
 % Author: OrthoPole (https://github.com/topfyf)
 %
 
-\def\pacakgename{MaTeXart}
+\def\packagename{MaTeXart}
 \def\packagever{1.0.0}
 \def\packagedate{2023/04/12}
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{matexart}[\packagename\space\packagever\space\packagedate]
+\ProvidesPackage{matexart}[\packagedate\space\packagename\space\packagever]
 
 
 %%% import packages %%%
@@ -46,13 +46,48 @@
     bookmarksnumbered=true, bookmarksopen=true,
     colorlinks, linkcolor=black, anchorcolor=black,
     citecolor=black]{hyperref}
-\RequirePackage{cleveref}
 
 % pacakges for math formula
-\RequirePacakge{amsmath, amssymb, amsthm, amsfonts}
+\RequirePackage{amsmath, amssymb, amsthm, amsfonts}
 \RequirePackage{mathrsfs, extarrows, bbm, bm}
 \RequirePackage{commutative-diagrams, quiver}
-\RequirePacakge[new]{old-arrows}
+\RequirePackage[new]{old-arrows}
+\RequirePackage{cleveref}
+
+
+%%% useful macros %%%
+
+% ** \mat@def#1 **
+% Description: define macros with no parameter by <control sequence> -> <replacement text>
+% Example:
+% * \mat@def{
+% *     \foo -> mate;   % \def\foo{mate}
+% *     \bar -> xart;   % \def\bar{xart}
+% * }
+% * \foo\bar            % output "matexart"
+\long\def\mat@def#1{\mat@def@A#1@}
+\def\mat@def@A{\futurelet\next\mat@def@B}
+\def\mat@def@B{\mat@ifempty\next \expandafter\mat@def@C \else \expandafter\mat@def@D \fi}
+\def\mat@def@C{\afterassignment\mat@def@A \let\next= }
+\def\mat@def@D{\ifx @\next \expandafter\mat@def@E \else \expandafter\mat@def@ \fi}
+\def\mat@def@E{\let\next= }
+\def\mat@def@#1-> #2;{\def#1{#2}\mat@def@A}
+\long\def\mat@ifempty#1{\expandafter\ifx\space#1 \mat@emptytrue \else\ifx\par#1 \mat@emptytrue \else \mat@emptyfalse \fi\fi \ifmat@empty}
+\newif\ifmat@empty
+
+
+%%% Declare Options %%%
+
+% whether \matdef is allowed
+% default: allowed
+\def\enablematdef{\let\matdef=\mat@def}
+\def\disablematdef{\let\matdef=\undefined}
+\DeclareOption{enable-matdef}{\enablematdef}
+\DeclareOption{disable-matdef}{\disablematdef}
+
+% default options
+\ExecuteOptions{enable-matdef}
+\ProcessOptions\relax
 
 
 \endinput
