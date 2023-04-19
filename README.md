@@ -78,7 +78,7 @@ Use `\enableloopstring` or `\disableloopstring` to enable or disable `\loopstrin
 \def\test#1{#1\ifx o#1\continuefalse\fi}
 \loopstring\ifcontinue{Hello World!}\test     % output "Hello"
 ```
-**Caution**. The parameter `#1,#3` may not be balanced texts.
+**Caution**. The parameter `#1`, `#3` may not be balanced texts.
 
 ### `\matdef`
 Enabled by option `enable-matdef` and disabled by option `disable-matdef` (see also options [`enable-matdef`](#enable-matdef) and [`disable-matdef`](#disable-matdef)).
@@ -112,8 +112,8 @@ The space between `<control>` and `->` is optional, but the space between `->` a
 | `\SL` | special linear group | $\operatorname{\mathbb{SL}}$ |
 | `\SO` | special orthogonal group | $\operatorname{\mathbb{SO}}$ |
 | `\SU` | special unitary group | $\operatorname{\mathbb{SU}}$ |
-| `\PGL` | projective general linear group | $\operatorname{\mathbb{\bold PGL}}$ |
-| `\PSL` | projective special linear group | $\operatorname{\mathbb{\bold PSL}}$ |
+| `\PGL` | projective general linear group | $\operatorname{\mathbb{\mathbf PGL}}$ |
+| `\PSL` | projective special linear group | $\operatorname{\mathbb{\mathbf PSL}}$ |
 | `\ab` | maximum abelian extension | $\operatorname{\mathnormal{ab}}$ |
 | `\adj` | adjoint of a matrix | $\operatorname{adj}$ |
 | `\al` | algebraic closure | $\operatorname{\mathnormal{al}}$ |
