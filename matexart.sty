@@ -55,9 +55,15 @@
 \RequirePackage{cleveref}
 
 
+%%% typesetting options
+\linespread{1.6}
+\renewcommand\arraystretch{0.6}
+\addtolength{\jot}{0.5em}
+
+
 %%% useful macros %%%
 
-% ** \mat@def#1 **
+% ** \long\def\mat@def#1 **
 % Description: define macros with no parameter by <control sequence> -> <replacement text>
 % Example:
 % * \mat@def{
@@ -66,27 +72,182 @@
 % * }
 % * \foo\bar            % output "matexart"
 \long\def\mat@def#1{\mat@def@A#1@}
-\def\mat@def@A{\futurelet\next\mat@def@B}
-\def\mat@def@B{\mat@ifempty\next \expandafter\mat@def@C \else \expandafter\mat@def@D \fi}
-\def\mat@def@C{\afterassignment\mat@def@A \let\next= }
-\def\mat@def@D{\ifx @\next \expandafter\mat@def@E \else \expandafter\mat@def@ \fi}
-\def\mat@def@E{\let\next= }
+\def\mat@def@A{\futurelet\mat@next\mat@def@B}
+\def\mat@def@B{\mat@ifempty\mat@next \expandafter\mat@def@D \else \expandafter\mat@def@E \fi}
+\def\mat@def@C{\let\mat@next= }
+\def\mat@def@D{\afterassignment\mat@def@A \let\mat@next= }
+\def\mat@def@E{\ifx @\mat@next \expandafter\mat@def@C \else \expandafter\mat@def@ \fi}
 \def\mat@def@#1-> #2;{\def#1{#2}\mat@def@A}
-\long\def\mat@ifempty#1{\expandafter\ifx\space#1 \mat@emptytrue \else\ifx\par#1 \mat@emptytrue \else \mat@emptyfalse \fi\fi \ifmat@empty}
-\newif\ifmat@empty
+
+% ** \long\def\mat@ifempty#1 **
+% Description: decide whether #1 is some blank character or not
+\long\def\mat@ifempty#1{\newif\ifmat@ifempty\expandafter\ifx\space#1\mat@ifemptytrue\else\ifx\par#1\mat@ifemptytrue\else\mat@ifemptyfalse\fi\fi\ifmat@ifempty}
+
+% ** \def\mat@loopstring#1#2 **
+% Description: execute #2 on each character in #1
+% Example:
+% * \mat@loopstring{Hello World!}\uppercase     % output "HELLO WORLD!"
+\def\mat@loopstring{\mat@loopstringwhile\iftrue}
+
+
+% ** \def\mat@loopstringwhile#1#2#3 **
+% Description: execute #3 on each character in #2 while #1 is true
+% Example:
+% \def\foo#1{\ifx#1a*\bartrue \else \barfalse \fi}
+% \newif\ifbar
+% \mat@loopstringwhile\ifbar{aaabcdef}\foo       % output "***"
+\long\def\mat@loopstringwhile#1#2#3{\mat@loopstring@while{#1}{#3}#2@}
+\def\mat@loopstring@while#1#2{\def\mat@do@{\mat@loopstring@A{#1}{#2}}#1\expandafter\mat@do@ \else \expandafter\mat@loopstring@absorb \fi}
+\def\mat@loopstring@A#1#2{\def\mat@do@{\mat@loopstring@B{#1}{#2}}\futurelet\mat@next\mat@do@}
+\def\mat@loopstring@B#1#2{\mat@ifempty\mat@next \expandafter\mat@loopstring@C \else \expandafter\mat@loopstring@ \fi{#1}{#2}}
+\def\mat@loopstring@C#1#2{\def\mat@do@{\mat@loopstring@{#1}{#2}{ }}\afterassignment\mat@do@ \let\mat@next= }
+\def\mat@loopstring@#1#2#3{\def\mat@stop@\fi##1##2##3##4##5{\fi}\ifx @#3\mat@stop@\fi#2{#3}\mat@loopstring@while{#1}{#2}}
+\long\def\mat@loopstring@absorb#1@{}
+
+
+% ** \def\mat@ifinstring#1#2 **
+% Description: judge whether character #2 is contained in #1
+% Example:
+% * \mat@ifinstring{abc}aYES\else NO\fi    % output "YES"
+% * \mat@ifinstring{abc}AYES\else NO\fi    % output "NO"
+% * \def\abc{{abc}}
+% * \expandafter\mat@ifinstring\abc aYES\else NO\fi     % output "YES"
+\def\mat@ifinstring#1#2{\newif\ifmat@notinstring\mat@notinstringtrue\let\mat@instring@tester=#2\mat@loopstringwhile\ifmat@notinstring{#1}\mat@ifinstring@\mat@ifnot\ifmat@notinstring}
+\def\mat@ifinstring@#1{\ifx#1\mat@instring@tester \mat@notinstringfalse \fi}
+
+
+% ** \def\mat@ifnot#1 **
+% Description: if #1 is false, then it is true; if #1 is true, then it is false
+% Example:
+% \newif\iffoo\footrue
+% \mat@ifnot\iffoo YES\else NO\fi       % output "NO"
+\def\mat@ifnot#1{\newif\ifmat@ifnot#1\mat@ifnotfalse\else\mat@ifnottrue\fi\ifmat@ifnot}
+
+
+% ** \def\mat@uppercaseletters **
+% Description: upper-case letters
+\def\mat@uppercaseletters{{ABCDEFGHIJKLMNOPQRSTUVWXYZ}}
+
+
+% ** \def\mat@lowercaseletters **
+% Description: lower-case letters
+\def\mat@lowercaseletters{{abcdefghijklmnopqrstuvwxyz}}
+
+% ** \def\mat@upperlowerletters **
+% Description: all letters (upper first)
+\def\mat@upperlowerletters{{ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz}}
+
+% ** \def\mat@lowerupperletters **
+% Description: all letters (lower first)
+\def\mat@lowerupperletters{{abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ}}
+
+
+%%% math tools
+
+% others
+\DeclareMathOperator{\hatoplus}{\hat\oplus}
+
+% operator name formats
+\def\mat@op@standard#1{\operatorname{#1}}
+\def\mat@op@normal#1{\operatorname{\mathnormal{#1}}}
+\def\mat@op@cursive#1{\operatorname{\mathnormal{\mathcal#1}}}
+\def\mat@op@lineargp#1{\operatorname{\mathbb{#1}}}
+
+% operator names
+\mat@def{
+
+    \GL     -> \mat@op@lineargp{GL};
+    \SL     -> \mat@op@lineargp{SL};
+    \SO     -> \mat@op@lineargp{SO};
+    \SU     -> \mat@op@lineargp{SU};
+    \PGL    -> \mat@op@lineargp{\bold PGL};
+    \PSL    -> \mat@op@lineargp{\bold PSL};
+
+    \ab     -> \mat@op@normal{ab};
+    \adj    -> \mat@op@standard{adj};
+    \al     -> \mat@op@normal{al};
+    \Alt    -> \mat@op@cursive{Alt};
+    \Aut    -> \mat@op@cursive{Aut};
+    \Ann    -> \mat@op@cursive{Ann};
+    \Br     -> \mat@op@cursive{Br};
+    \coim   -> \mat@op@standard{coim};
+    \coker  -> \mat@op@standard{coker};
+    \Cl     -> \mat@op@cursive{Cl};
+    \Cor    -> \mat@op@cursive{Cor};
+    \Char   -> \mat@op@cursive{Char};
+    \diag   -> \mat@op@standard{diag};
+    \disc   -> \mat@op@standard{disc};
+    \Div    -> \mat@op@cursive{Div};
+    \End    -> \mat@op@cursive{End};
+    \Ext    -> \mat@op@cursive{Ext};
+    \Frac   -> \mat@op@cursive{Frac};
+    \Gal    -> \mat@op@cursive{Gal};
+    \Hom    -> \mat@op@cursive{Hom};
+    \id     -> \mat@op@standard{id};
+    \im     -> \mat@op@standard{im};
+    \inv    -> \mat@op@standard{inv};
+    \Inf    -> \mat@op@cursive{Inf};
+    \Irr    -> \mat@op@cursive{Irr};
+    \Mor    -> \mat@op@cursive{Mor};
+    \nr     -> \mat@op@normal{nr};
+    \Nm     -> \mat@op@cursive{Nm};
+    \ord    -> \mat@op@standard{ord}
+    \Orb    -> \mat@op@cursive{Orb};
+    \rad    -> \mat@op@standard{rad};
+    \rank   -> \mat@op@standard{rank};
+    \Res    -> \mat@op@cursive{Res};
+    \sep    -> \mat@op@normal{sep};
+    \sign   -> \mat@op@cursive{sign};
+    \Stab   -> \mat@op@cursive{Stab};
+    \Spec   -> \mat@op@cursive{Spec};
+    \Sym    -> \mat@op@cursive{Sym};
+    \tr     -> \mat@op@standard{tr};
+    \Tr     -> \mat@op@cursive{Tr};
+    \Tor    -> \mat@op@cursive{Tor};
+    \ur     -> \mat@op@normal{ur};
+    \vol    -> \mat@op@standard{vol};
+
+    \psum   -> \sideset{}{'}\sum;
+    \pprod  -> \sideset{}{'}\prod;
+
+}
+
+% cursive single letter
+% Description: \A -> \mathbb{a}; \AA -> \mathcal{A}; \aa -> \mathscr{A};
+%            * \AAA -> \mathfrak{A}; \aaa -> \mathfrak{a};
+\def\mat@definecursiveletter#1{%
+    \expandafter\mat@ifinstring\mat@uppercaseletters#1%
+        \expandafter\def\csname #1\endcsname{\mathbb{#1}}%
+        \expandafter\def\csname #1#1\endcsname{\mathcal{#1}}%
+        \expandafter\def\csname #1#1#1\endcsname{\mathfrak{#1}}%
+    \else\expandafter\mat@ifinstring\mat@lowercaseletters#1%
+        \expandafter\def\csname #1#1\endcsname{\mathscr{\uppercase{#1}}}%
+        \expandafter\def\csname #1#1#1\endcsname{\mathfrak{#1}}%
+    \fi
+}
+\expandafter\mat@loopstring\mat@upperlowerletters\mat@definecursiveletter
 
 
 %%% Declare Options %%%
 
-% whether \matdef is allowed
-% default: allowed
+% ** enable-matdef, disable-matdef **
+% Description: whether \matdef is enabled
+% Default: enabled
 \def\enablematdef{\let\matdef=\mat@def}
 \def\disablematdef{\let\matdef=\undefined}
 \DeclareOption{enable-matdef}{\enablematdef}
 \DeclareOption{disable-matdef}{\disablematdef}
 
+% ** enable-loopstring, disable-loopstring **
+% Description: whether \loopstring and \loopstringwhen are enabled
+% Default: disabled
+\def\enableloopstring{\let\loopstring=\mat@loopstring\let\loopstringwhen=\mat@loopstringwhen}
+\def\disableloopstring{\let\loopstring=\undefined\let\loopstringwhen=\undefined}
+\DeclareOption{enable-loopstring}{\enableloopstring}
+\DeclareOption{disable-loopstring}{\disableloopstring}
+
 % default options
-\ExecuteOptions{enable-matdef}
+\ExecuteOptions{enable-matdef, enable-loopstring}
 \ProcessOptions\relax
 
 
